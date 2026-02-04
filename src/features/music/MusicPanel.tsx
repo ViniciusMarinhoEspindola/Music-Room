@@ -4,18 +4,14 @@ import { TrackInfo } from "./components/TrackInfo";
 import { VolumeControl } from "./components/VolumeControl";
 import { PlayerButtons } from "./components/PlayerButtons";
 import { useMusicStore } from "~/features/music/music.store";
+import { mockTracks } from "~/mocks/MockTracks";
 
 export default function MusicPanel() {
-  const setCurrentTrack = useMusicStore((state) => state.setCurrentTrack);
+  const loadTrack = useMusicStore((state) => state.loadTrack);
 
   useEffect(() => {
-    setCurrentTrack({
-      image: "/src/assets/images/capa.jpg",
-      title: "Midnight Dreams",
-      artist: "Lofi Beats Collective",
-      duration: 180,
-    });
-  }, []);
+    loadTrack(mockTracks[0]);
+  }, [loadTrack]);
 
   return (
     <div

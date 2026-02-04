@@ -11,8 +11,8 @@ export function AlbumArt() {
   return (
     <div className="col-span-1 flex items-center justify-center relative">
       <div className="bg-black rounded-xl size-full hidden md:block">
-        {currentTrack?.image ? (
-          <img src={currentTrack.image} className="rounded-xl h-full w-full" alt="imagem de capa" />
+        {currentTrack?.cover ? (
+          <img src={currentTrack.cover} className="rounded-xl h-full w-full" alt="imagem de capa" />
         ) : (
           <MusicNote className="text-foreground m-4" />
         )}

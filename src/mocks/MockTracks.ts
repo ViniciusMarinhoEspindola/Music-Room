@@ -4,7 +4,6 @@ export interface Track {
   artist: string;
   album?: string;
   url: string;
-  duration?: number;
   cover?: string;
 }
 

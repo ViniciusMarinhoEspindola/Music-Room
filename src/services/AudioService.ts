@@ -35,13 +35,16 @@ export default class AudioService {
     this.audio = new Audio(url);
 
     this.source = this.audioContext.createMediaElementSource(this.audio);
-    this.source.connect(this.audioContext.destination);
     this.source.connect(this.gainNode);
 
     this.connectEvents();
   }
 
   public play(): void {
+    if (this.audioContext.state === "suspended") {
+      this.audioContext.resume();
+    }
+
     this.audio?.play();
   }
 

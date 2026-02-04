@@ -3,23 +3,24 @@ import { useMusicStore } from "~/features/music/music.store";
 import { formatTime } from "~/utils/formatters";
 
 export function ProgressBar() {
-  const currentTrack = useMusicStore((state) => state.currentTrack);
-  const setCurrentTime = useMusicStore((state) => state.setCurrentTime);
+  const currentTime = useMusicStore((state) => state.currentTime);
+  const duration = useMusicStore((state) => state.duration);
+  const seek = useMusicStore((state) => state.seek);
 
   const handleChangeTime = (event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const currentPercent = Number.parseInt(event.target.value, 10);
-    const total = currentTrack?.duration || 1;
+    const total = duration || 1;
     const newTime = (currentPercent / 100) * total;
 
-    setCurrentTime(newTime);
+    seek(newTime);
   };
 
   const progress = useMemo(() => {
-    const current = currentTrack?.currentTime || 0;
-    const total = currentTrack?.duration || 1;
+    const current = currentTime || 0;
+    const total = duration || 1;
 
     return (current / total) * 100;
-  }, [currentTrack?.currentTime, currentTrack?.duration]);
+  }, [currentTime, duration]);
 
   return (
     <div className="mt-3">
@@ -34,12 +35,8 @@ export function ProgressBar() {
       />
 
       <div className="flex justify-between mt-1">
-        <span className="text-muted-light font-light text-xs">
-          {formatTime(currentTrack?.currentTime || 0)}
-        </span>
-        <span className="text-muted-light font-light text-xs">
-          {formatTime(currentTrack?.duration || 0)}
-        </span>
+        <span className="text-muted-light font-light text-xs">{formatTime(currentTime || 0)}</span>
+        <span className="text-muted-light font-light text-xs">{formatTime(duration || 0)}</span>
       </div>
     </div>
   );
