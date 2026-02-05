@@ -4,14 +4,21 @@ import { TrackInfo } from "./components/TrackInfo";
 import { VolumeControl } from "./components/VolumeControl";
 import { PlayerButtons } from "./components/PlayerButtons";
 import { useMusicStore } from "~/features/music/music.store";
-import { mockTracks } from "~/mocks/MockTracks";
+import { getRandomTrack } from "~/mocks/MockTracks";
 
 export default function MusicPanel() {
   const loadTrack = useMusicStore((state) => state.loadTrack);
+  const play = useMusicStore((state) => state.play);
 
   useEffect(() => {
-    loadTrack(mockTracks[0]);
-  }, [loadTrack]);
+    loadTrack(getRandomTrack());
+
+    const timer = setTimeout(() => {
+      play();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [loadTrack, play]);
 
   return (
     <div
