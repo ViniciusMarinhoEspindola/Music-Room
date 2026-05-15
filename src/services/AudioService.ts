@@ -16,16 +16,23 @@ type EventListenersMap = {
 
 export default class AudioService {
   private readonly audioContext: AudioContext;
+  private readonly analyser: AnalyserNode;
   private readonly gainNode: GainNode;
   private source?: MediaElementAudioSourceNode;
   private audio?: HTMLAudioElement;
 
   private readonly eventListeners: EventListenersMap = {};
+  private readonly fftSize: number = 512;
 
   constructor() {
     this.audioContext = new AudioContext();
+
+    this.analyser = this.audioContext.createAnalyser();
+    this.analyser.fftSize = this.fftSize;
+    this.analyser.connect(this.audioContext.destination);
+
     this.gainNode = this.audioContext.createGain();
-    this.gainNode.connect(this.audioContext.destination);
+    this.gainNode.connect(this.analyser);
   }
 
   public load(url: string): void {
@@ -87,6 +94,13 @@ export default class AudioService {
     this.eventListeners[event]!.push(callback);
   }
 
+  public off<K extends AudioEventType>(event: K, callback: AudioEventMap[K]): void {
+    const listeners = this.eventListeners[event];
+    if (listeners) {
+      this.eventListeners[event] = listeners.filter((cb) => cb !== callback) as typeof listeners;
+    }
+  }
+
   private emit<K extends AudioEventType>(event: K, ...args: Parameters<AudioEventMap[K]>): void {
     const listeners = this.eventListeners[event];
     if (listeners) {
@@ -110,6 +124,20 @@ export default class AudioService {
 
   public isPlaying(): boolean {
     return !this.audio?.paused;
+  }
+
+  public getWaveformData(): Uint8Array {
+    const arrayData = new Uint8Array(this.analyser.frequencyBinCount);
+    this.analyser.getByteTimeDomainData(arrayData);
+
+    return arrayData;
+  }
+
+  public getFrequencyData(): Uint8Array {
+    const arrayData = new Uint8Array(this.analyser.frequencyBinCount);
+    this.analyser.getByteFrequencyData(arrayData);
+
+    return arrayData;
   }
 
   private connectEvents(): void {

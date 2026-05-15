@@ -1,11 +1,6 @@
-export interface Track {
-  id: number;
-  title: string;
-  artist: string;
-  album?: string;
-  url: string;
-  cover?: string;
-}
+export type { Track } from "~/types";
+
+import type { Track } from "~/types";
 
 export const mockTracks: Track[] = [
   {

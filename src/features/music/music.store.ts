@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import AudioService from "~/services/AudioService";
-import { mockTracks, getNextTrack, getPreviousTrack, type Track } from "~/mocks/MockTracks";
+import { mockTracks, getNextTrack, getPreviousTrack, shuffleTracks } from "~/mocks/MockTracks";
+import type { Track } from "~/types";
 
 interface MusicState {
   volume: number;
@@ -22,6 +23,7 @@ interface MusicState {
   loadTrack: (track: Track) => void;
   togglePlay: () => void;
   toggleMute: () => void;
+  shuffle: () => void;
 }
 
 export const useMusicStore = create<MusicState>((set, get) => {
@@ -117,10 +119,18 @@ export const useMusicStore = create<MusicState>((set, get) => {
       }
     },
 
+    shuffle: () => {
+      const shuffled = shuffleTracks();
+      const { currentTrack } = get();
+      const next = shuffled.find((t) => t.id !== currentTrack?.id) ?? shuffled[0];
+      get().loadTrack(next);
+      get().play();
+    },
+
     toggleMute: () => {
       const state = get();
 
-      if (state.volume == 0) {
+      if (state.volume !== 0) {
         audioService.setVolume(0);
         set({ previousVolume: state.volume, volume: 0 });
       } else {
